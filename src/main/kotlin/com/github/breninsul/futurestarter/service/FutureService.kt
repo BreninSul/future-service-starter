@@ -30,6 +30,7 @@ package com.github.breninsul.futurestarter.service
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ExecutionException
 import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.reflect.KClass
@@ -77,7 +78,37 @@ interface FutureService {
      * @return a CompletableFuture of type T
      */
     fun <T : Any> registerTask(id: Any, resultClass: KClass<T>): CompletableFuture<T>
-
+    /**
+     * Method to register a task and wait for the result.
+     *
+     * @param id the task ID
+     * @param resultClass the class of the result
+     * @return the return type of the task
+     * @throws Throwable if there's any exception during the execution of the task
+     */
+    fun <T : Any> waitResult(id: Any, resultClass: KClass<T>): T{
+        try {
+            return registerTask(id, resultClass).get()
+        } catch (t: ExecutionException){
+            throw t.cause!!
+        }
+    }
+    /**
+     * Method to register a task, wait for the result, and specify a timeout duration.
+     *
+     * @param id the task ID
+     * @param resultClass the class of the result
+     * @param timeout the timeout duration
+     * @return the return type of the task
+     * @throws Throwable if there's any exception during the execution of the task
+     */
+    fun <T : Any> waitResult(id: Any, resultClass: KClass<T>, timeout: Duration): T{
+        try {
+            return registerTask(id, resultClass,timeout).get()
+        } catch (t: ExecutionException){
+            throw t.cause!!
+        }
+    }
     /**
      * Completes a task with a specific ID, class
      *

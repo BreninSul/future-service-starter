@@ -42,8 +42,24 @@ inline fun <reified T : Any> FutureService.registerTask(id: Any): CompletableFut
  * @param timeout The maximum time to wait for the task to complete
  * @return A future representing the result of the task
  */
-inline fun <reified T : Any> FutureService.registerTask(id: Any, timeout: Duration): CompletableFuture<T> =
-    registerTask(id, T::class, timeout)
+inline fun <reified T : Any> FutureService.registerTask(id: Any, timeout: Duration): CompletableFuture<T> = registerTask(id, T::class, timeout)
+
+/**
+ * Waits for a task with a specified id to complete and returns its result.
+ * @param T The type of the result returned by the task
+ * @param id The identification of the task
+ * @param timeout The maximum time to wait for the task to complete
+ * @return The result of the completed task
+ */
+inline fun <reified T : Any> FutureService.waitResult(id: Any, timeout: Duration): T = waitResult(id, T::class, timeout)
+
+/**
+ * Waits for a task with a specified id to complete and returns its result.
+ * @param T The type of the result returned by the task
+ * @param id The identification of the task
+ * @return The result of the completed task
+ */
+inline fun <reified T : Any> FutureService.waitResult(id: Any): T = waitResult(id, T::class)
 
 /**
  * Completes a task with the specified id and result.
