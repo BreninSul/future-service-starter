@@ -65,6 +65,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
+        freeCompilerArgs += "-Xjvm-enable-preview"
         jvmTarget = "17"
     }
 }

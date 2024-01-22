@@ -47,7 +47,7 @@ interface FutureService {
     /**
      * Represents a task with a specific ID and class
      */
-//    @JvmRecord
+    @JvmRecord
     data class TaskId(val id: Any, val resultClass: KClass<*>) {
         override fun toString(): String {
             return "${resultClass.simpleName}:${id}"
@@ -57,7 +57,7 @@ interface FutureService {
     /**
      * Represents a result with a completion future, an expiry time, and a creation timestamp
      */
-//    @JvmRecord
+    @JvmRecord
     data class Result<T>(val result: CompletableFuture<T>, val expireTime: LocalDateTime, val createTimestamp: Long = System.currentTimeMillis())
 
     /**
