@@ -48,11 +48,10 @@ import kotlin.reflect.KClass
     prefix = "future.service",
     name = ["enabled"],
     matchIfMissing = true,
-    havingValue = "true"
+    havingValue = "true",
 )
 @EnableConfigurationProperties(FutureServiceProperties::class)
 class FutureServiceAutoConfiguration {
-
     /**
      * Defines the configuration for future service.
      *
@@ -65,9 +64,9 @@ class FutureServiceAutoConfiguration {
             futureServiceProperties.defaultClassTimeout.mapKeys { Class.forName(it.key).kotlin } as MutableMap<KClass<*>, Duration>
         val loggingLevel = Level.parse(futureServiceProperties.loggingLevel)
         val default = DefaultFutureService(classTimeoutMap, futureServiceProperties.defaultTimeout, loggingLevel)
-        return if (futureServiceProperties.clearDelay.toNanos()>0){
-            ClearUncompletedFutureService(default,futureServiceProperties.clearDelay)
-        } else{
+        return if (futureServiceProperties.clearDelay.toNanos() > 0) {
+            ClearUncompletedFutureService(default, futureServiceProperties.clearDelay)
+        } else {
             default
         }
     }

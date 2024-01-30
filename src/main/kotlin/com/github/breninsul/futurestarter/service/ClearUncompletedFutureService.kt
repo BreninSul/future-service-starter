@@ -33,32 +33,31 @@ import java.util.logging.Level
  * Class that provides a mechanism to clear uncompleted futures.
  * It does this by scheduling a task to be run at specified delay intervals
  *
- * @param   futureService the FutureService instance used for future operations
- * @param   schedulerDelay the delay at which the scheduler will run
+ * @param futureService the FutureService instance used for future operations
+ * @param schedulerDelay the delay at which the scheduler will run
  */
 open class ClearUncompletedFutureService(
     protected val futureService: FutureService,
-    protected val schedulerDelay: Duration
-) : FutureService by object : ScheduledFutureServiceWrapper(futureService, schedulerDelay, "ClearUncompleted"){
-
-    /**
-     * Function to run the scheduled task.
-     * It gets the expired futures and tries to complete them exceptionally.
-     * If an error occurs, it logs the error
-     */
-    override fun runScheduled() {
-        val outdated = getExpired()
-        outdated.forEach {
-            try {
-                completeExceptionally(
-                    it.id,
-                    it.resultClass,
-                    TimeoutException("Maximum timeout reached for this Future")
-                )
-                logger.log(loggingLevel, "ClearUncompletedFutureService completed on timeout $it")
-            } catch (t: Throwable) {
-                logger.log(Level.SEVERE, "Error on ClearUncompletedFutureService complete $it", t)
+    protected val schedulerDelay: Duration,
+) : FutureService by object : ScheduledFutureServiceWrapper(futureService, schedulerDelay, "ClearUncompleted") {
+        /**
+         * Function to run the scheduled task.
+         * It gets the expired futures and tries to complete them exceptionally.
+         * If an error occurs, it logs the error
+         */
+        override fun runScheduled() {
+            val outdated = getExpired()
+            outdated.forEach {
+                try {
+                    completeExceptionally(
+                        it.id,
+                        it.resultClass,
+                        TimeoutException("Maximum timeout reached for this Future"),
+                    )
+                    logger.log(loggingLevel, "ClearUncompletedFutureService completed on timeout $it")
+                } catch (t: Throwable) {
+                    logger.log(Level.SEVERE, "Error on ClearUncompletedFutureService complete $it", t)
+                }
             }
         }
     }
-}

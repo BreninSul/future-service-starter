@@ -36,7 +36,6 @@ import java.util.logging.Logger
 import kotlin.reflect.KClass
 
 interface FutureService {
-
     /**
      * Represents the current logging level being used
      *
@@ -47,17 +46,15 @@ interface FutureService {
     /**
      * Represents a task with a specific ID and class
      */
-//    @JvmRecord
     data class TaskId(val id: Any, val resultClass: KClass<*>) {
         override fun toString(): String {
-            return "${resultClass.simpleName}:${id}"
+            return "${resultClass.simpleName}:$id"
         }
     }
 
     /**
      * Represents a result with a completion future, an expiry time, and a creation timestamp
      */
-//    @JvmRecord
     data class Result<T>(val result: CompletableFuture<T>, val expireTime: LocalDateTime, val createTimestamp: Long = System.currentTimeMillis())
 
     /**
@@ -68,7 +65,11 @@ interface FutureService {
      * @param timeout the timeout duration
      * @return a CompletableFuture of type T
      */
-    fun <T : Any> registerTask(id: Any, resultClass: KClass<T>, timeout: Duration): CompletableFuture<T>
+    fun <T : Any> registerTask(
+        id: Any,
+        resultClass: KClass<T>,
+        timeout: Duration,
+    ): CompletableFuture<T>
 
     /**
      * Registers a task with a specific ID and class
@@ -77,7 +78,11 @@ interface FutureService {
      * @param resultClass the class of the result
      * @return a CompletableFuture of type T
      */
-    fun <T : Any> registerTask(id: Any, resultClass: KClass<T>): CompletableFuture<T>
+    fun <T : Any> registerTask(
+        id: Any,
+        resultClass: KClass<T>,
+    ): CompletableFuture<T>
+
     /**
      * Method to register a task and wait for the result.
      *
@@ -86,13 +91,17 @@ interface FutureService {
      * @return the return type of the task
      * @throws Throwable if there's any exception during the execution of the task
      */
-    fun <T : Any> waitResult(id: Any, resultClass: KClass<T>): T{
+    fun <T : Any> waitResult(
+        id: Any,
+        resultClass: KClass<T>,
+    ): T {
         try {
             return registerTask(id, resultClass).get()
-        } catch (t: ExecutionException){
+        } catch (t: ExecutionException) {
             throw t.cause!!
         }
     }
+
     /**
      * Method to register a task, wait for the result, and specify a timeout duration.
      *
@@ -102,13 +111,18 @@ interface FutureService {
      * @return the return type of the task
      * @throws Throwable if there's any exception during the execution of the task
      */
-    fun <T : Any> waitResult(id: Any, resultClass: KClass<T>, timeout: Duration): T{
+    fun <T : Any> waitResult(
+        id: Any,
+        resultClass: KClass<T>,
+        timeout: Duration,
+    ): T {
         try {
-            return registerTask(id, resultClass,timeout).get()
-        } catch (t: ExecutionException){
+            return registerTask(id, resultClass, timeout).get()
+        } catch (t: ExecutionException) {
             throw t.cause!!
         }
     }
+
     /**
      * Completes a task with a specific ID, class
      *
@@ -116,7 +130,11 @@ interface FutureService {
      * @param resultClass the class of the result
      * @param result the result of the task
      */
-    fun <T : Any> complete(id: Any, resultClass: KClass<T>, result: T)
+    fun <T : Any> complete(
+        id: Any,
+        resultClass: KClass<T>,
+        result: T,
+    )
 
     /**
      * Mark a task as exceptionally completed with a specific ID, class, and exception
@@ -125,7 +143,11 @@ interface FutureService {
      * @param resultClass the class of the result
      * @param result the exception that was thrown
      */
-    fun <T : Any> completeExceptionally(id: Any, resultClass: KClass<T>, result: Throwable)
+    fun <T : Any> completeExceptionally(
+        id: Any,
+        resultClass: KClass<T>,
+        result: Throwable,
+    )
 
     /**
      * Get a list of all tasks that have expired

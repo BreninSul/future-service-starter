@@ -39,9 +39,8 @@ import java.util.logging.Level
 abstract class ScheduledFutureServiceWrapper(
     protected val futureService: FutureService,
     val schedulerDelay: Duration,
-    val name: String
+    val name: String,
 ) : FutureService by futureService {
-
     /**
      * Creates and initializes a timer with a fixed delay schedule.
      *
@@ -50,7 +49,11 @@ abstract class ScheduledFutureServiceWrapper(
      * @param scheduleDelay The delay duration between scheduling.
      * @return Returns an initialized timer.
      */
-    protected fun createTimer(name: String, task: TimerTask, scheduleDelay: Duration): Timer {
+    protected fun createTimer(
+        name: String,
+        task: TimerTask,
+        scheduleDelay: Duration,
+    ): Timer {
         val timer = Timer(name)
         timer.scheduleAtFixedRate(task, scheduleDelay.toMillis(), scheduleDelay.toMillis())
         return timer
@@ -59,7 +62,8 @@ abstract class ScheduledFutureServiceWrapper(
     /**
      * The task to be run by the scheduler.
      */
-    protected open val task: TimerTask =  object : TimerTask() {
+    protected open val task: TimerTask =
+        object : TimerTask() {
             /**
              * The method that is executed at every scheduling event.
              */

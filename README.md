@@ -20,7 +20,7 @@ repositories {
 ````kotlin
 dependencies {
 //Other dependencies
-    implementation("com.github.breninsul:future-starter:1.0.0")
+    implementation("com.github.breninsul:future-starter:1.0.1")
 //Other dependencies
 }
 

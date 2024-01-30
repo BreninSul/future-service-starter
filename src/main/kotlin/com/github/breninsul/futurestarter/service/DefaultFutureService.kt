@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
+
 /**
  * The default implementation of [FutureService].
  *
@@ -42,34 +43,43 @@ import kotlin.reflect.full.isSubclassOf
 open class DefaultFutureService(
     protected val timeoutClassMap: Map<KClass<*>, Duration>,
     protected val defaultTimeout: Duration,
-    override val loggingLevel: Level = Level.INFO
+    override val loggingLevel: Level = Level.INFO,
 ) : FutureService {
-
     /**
      * The Map holding the Futures mapped by [FutureService.TaskId].
      */
     protected val resultMap: MutableMap<FutureService.TaskId, FutureService.Result<*>> = mutableMapOf()
+
     /**
      * {@inheritDoc}
      */
-    override fun <T : Any> registerTask(id: Any, resultClass: KClass<T>): CompletableFuture<T> {
+    override fun <T : Any> registerTask(
+        id: Any,
+        resultClass: KClass<T>,
+    ): CompletableFuture<T> {
         return registerTask(id, resultClass, getTimeout(resultClass))
     }
+
     /**
      * {@inheritDoc}
      */
-    override fun <T : Any> registerTask(id: Any, resultClass: KClass<T>, timeout: Duration): CompletableFuture<T> {
+    override fun <T : Any> registerTask(
+        id: Any,
+        resultClass: KClass<T>,
+        timeout: Duration,
+    ): CompletableFuture<T> {
         val taskId = FutureService.TaskId(id, resultClass)
-        val future = CompletableFuture<T>()
-            .orTimeout(timeout.toMillis(), TimeUnit.MILLISECONDS)
-            .whenComplete { _, exception ->
-                if (exception != null) {
-                    logger.log(Level.SEVERE, "Error while processing Future $taskId", exception)
-                } else {
-                    logger.log(loggingLevel, "Callback save image completed $taskId")
+        val future =
+            CompletableFuture<T>()
+                .orTimeout(timeout.toMillis(), TimeUnit.MILLISECONDS)
+                .whenComplete { _, exception ->
+                    if (exception != null) {
+                        logger.log(Level.SEVERE, "Error while processing Future $taskId", exception)
+                    } else {
+                        logger.log(loggingLevel, "Callback save image completed $taskId")
+                    }
+                    resultMap.remove(taskId)
                 }
-                resultMap.remove(taskId)
-            }
         resultMap[taskId] = FutureService.Result(future, LocalDateTime.now().plus(timeout))
         return future
     }
@@ -77,7 +87,11 @@ open class DefaultFutureService(
     /**
      * {@inheritDoc}
      */
-    override fun <T : Any> complete(id: Any, resultClass: KClass<T>, result: T) {
+    override fun <T : Any> complete(
+        id: Any,
+        resultClass: KClass<T>,
+        result: T,
+    ) {
         val taskId = FutureService.TaskId(id, resultClass)
         return try {
             val futureTask = resultMap[taskId]
@@ -89,16 +103,21 @@ open class DefaultFutureService(
             resultMap.remove(taskId)
             logger.log(
                 loggingLevel,
-                "Future $taskId completed took ${System.currentTimeMillis() - futureTask.createTimestamp}ms"
+                "Future $taskId completed took ${System.currentTimeMillis() - futureTask.createTimestamp}ms",
             )
         } catch (t: Throwable) {
             logger.log(Level.SEVERE, "Error while complete Future $taskId", t)
         }
     }
+
     /**
      * {@inheritDoc}
      */
-    override fun <T : Any> completeExceptionally(id: Any, resultClass: KClass<T>, result: Throwable) {
+    override fun <T : Any> completeExceptionally(
+        id: Any,
+        resultClass: KClass<T>,
+        result: Throwable,
+    ) {
         val taskId = FutureService.TaskId(id, resultClass)
         return try {
             val futureTask = resultMap[taskId] ?: return
@@ -109,12 +128,13 @@ open class DefaultFutureService(
             resultMap.remove(taskId)
             logger.log(
                 loggingLevel,
-                "Future $taskId completeExceptionally with ${result.javaClass}:${result.message} took ${System.currentTimeMillis() - futureTask.createTimestamp}ms"
+                "Future $taskId completeExceptionally with ${result.javaClass}:${result.message} took ${System.currentTimeMillis() - futureTask.createTimestamp}ms",
             )
         } catch (t: Throwable) {
             logger.log(Level.SEVERE, "Error while completeExceptionally Future $taskId", t)
         }
     }
+
     /**
      * {@inheritDoc}
      */
@@ -122,6 +142,7 @@ open class DefaultFutureService(
         val now = LocalDateTime.now()
         return resultMap.filter { it.value.expireTime.isAfter(now) }.map { it.key }
     }
+
     /**
      * Protected helper function to get timeout for a specific class.
      */
@@ -129,6 +150,4 @@ open class DefaultFutureService(
         timeoutClassMap.filterKeys { clazz == it }.map { it.value }.firstOrNull()
             ?: timeoutClassMap.filterKeys { clazz.isSubclassOf(it) }.map { it.value }.firstOrNull()
             ?: defaultTimeout
-
-
 }

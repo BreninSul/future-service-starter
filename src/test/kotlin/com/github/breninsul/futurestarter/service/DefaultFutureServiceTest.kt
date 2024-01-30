@@ -37,66 +37,69 @@ import kotlin.concurrent.thread
 
 @ExtendWith(SpringExtension::class)
 class DefaultFutureServiceTest {
-
     @Test
     fun `test async task completion`() {
         val futureService = DefaultFutureService(mapOf(), Duration.ofMinutes(1))
-        val taskId="test async task completion"
+        val taskId = "test async task completion"
         val okResult = "OK"
-        val jobThread=thread(start = true) {
-            val time=System.currentTimeMillis()
-            val future = futureService.registerTask<String>(taskId)
-            val result=future.get()
-            logger.log(Level.INFO,"$taskId took ${System.currentTimeMillis()-time} ms")
-            assertEquals(okResult, result)
-        }
+        val jobThread =
+            thread(start = true) {
+                val time = System.currentTimeMillis()
+                val future = futureService.registerTask<String>(taskId)
+                val result = future.get()
+                logger.log(Level.INFO, "$taskId took ${System.currentTimeMillis() - time} ms")
+                assertEquals(okResult, result)
+            }
         thread(start = true) {
             Thread.sleep(100)
-            futureService.complete<String>(taskId,okResult)
-        }
-        jobThread.join()
-    }
-    @Test
-    fun `test async task timeout`() {
-        val futureService = DefaultFutureService(mapOf(), Duration.ofMinutes(1))
-        val taskId="test async task timeout"
-        val jobThread=thread(start = true) {
-            val time=System.currentTimeMillis()
-            val future = futureService.registerTask<String>(taskId,Duration.ofMillis(100))
-            try {
-                future.thenApply { "Mod$it" } .get()
-            } catch (t:ExecutionException) {
-                val original=t.cause
-                logger.log(Level.INFO, "$taskId took ${System.currentTimeMillis() - time} ms")
-                assertInstanceOf(TimeoutException::class.java,original)
-            }
+            futureService.complete<String>(taskId, okResult)
         }
         jobThread.join()
     }
 
+    @Test
+    fun `test async task timeout`() {
+        val futureService = DefaultFutureService(mapOf(), Duration.ofMinutes(1))
+        val taskId = "test async task timeout"
+        val jobThread =
+            thread(start = true) {
+                val time = System.currentTimeMillis()
+                val future = futureService.registerTask<String>(taskId, Duration.ofMillis(100))
+                try {
+                    future.thenApply { "Mod$it" }.get()
+                } catch (t: ExecutionException) {
+                    val original = t.cause
+                    logger.log(Level.INFO, "$taskId took ${System.currentTimeMillis() - time} ms")
+                    assertInstanceOf(TimeoutException::class.java, original)
+                }
+            }
+        jobThread.join()
+    }
 
     @Test
     fun `test async task completion error`() {
         val futureService = DefaultFutureService(mapOf(), Duration.ofMinutes(1))
-        val taskId="test async task completion error"
+        val taskId = "test async task completion error"
         val exception = IllegalStateException("Test")
-        val jobThread=thread(start = true) {
-            val time=System.currentTimeMillis()
-            val future = futureService.registerTask<String>(taskId)
-            try {
-               future.thenApply { "Mod$it" } .get()
-            } catch (t:ExecutionException) {
-                val original=t.cause
-                logger.log(Level.INFO, "$taskId took ${System.currentTimeMillis() - time} ms")
-                assertEquals(exception,original)
+        val jobThread =
+            thread(start = true) {
+                val time = System.currentTimeMillis()
+                val future = futureService.registerTask<String>(taskId)
+                try {
+                    future.thenApply { "Mod$it" }.get()
+                } catch (t: ExecutionException) {
+                    val original = t.cause
+                    logger.log(Level.INFO, "$taskId took ${System.currentTimeMillis() - time} ms")
+                    assertEquals(exception, original)
+                }
             }
-        }
         thread(start = true) {
             Thread.sleep(100)
-            futureService.completeExceptionally<String>(taskId,exception)
+            futureService.completeExceptionally<String>(taskId, exception)
         }
         jobThread.join()
     }
+
     companion object {
         internal val logger = Logger.getLogger(this::class.java.name)
     }

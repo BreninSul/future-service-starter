@@ -42,7 +42,10 @@ inline fun <reified T : Any> FutureService.registerTask(id: Any): CompletableFut
  * @param timeout The maximum time to wait for the task to complete
  * @return A future representing the result of the task
  */
-inline fun <reified T : Any> FutureService.registerTask(id: Any, timeout: Duration): CompletableFuture<T> = registerTask(id, T::class, timeout)
+inline fun <reified T : Any> FutureService.registerTask(
+    id: Any,
+    timeout: Duration,
+): CompletableFuture<T> = registerTask(id, T::class, timeout)
 
 /**
  * Waits for a task with a specified id to complete and returns its result.
@@ -51,7 +54,10 @@ inline fun <reified T : Any> FutureService.registerTask(id: Any, timeout: Durati
  * @param timeout The maximum time to wait for the task to complete
  * @return The result of the completed task
  */
-inline fun <reified T : Any> FutureService.waitResult(id: Any, timeout: Duration): T = waitResult(id, T::class, timeout)
+inline fun <reified T : Any> FutureService.waitResult(
+    id: Any,
+    timeout: Duration,
+): T = waitResult(id, T::class, timeout)
 
 /**
  * Waits for a task with a specified id to complete and returns its result.
@@ -67,7 +73,10 @@ inline fun <reified T : Any> FutureService.waitResult(id: Any): T = waitResult(i
  * @param id The identification of the task
  * @param result The result of the completed task
  */
-inline fun <reified T : Any> FutureService.complete(id: Any,result:T)= complete(id, T::class,result)
+inline fun <reified T : Any> FutureService.complete(
+    id: Any,
+    result: T,
+) = complete(id, T::class, result)
 
 /**
  * Completes a task exceptionally with the specified id and result.
@@ -75,4 +84,7 @@ inline fun <reified T : Any> FutureService.complete(id: Any,result:T)= complete(
  * @param id The identification of the task
  * @param result The exception thrown by the task
  */
-inline fun <reified T : Any> FutureService.completeExceptionally(id: Any,result:Throwable)= completeExceptionally(id, T::class,result)
+inline fun <reified T : Any> FutureService.completeExceptionally(
+    id: Any,
+    result: Throwable,
+) = completeExceptionally(id, T::class, result)

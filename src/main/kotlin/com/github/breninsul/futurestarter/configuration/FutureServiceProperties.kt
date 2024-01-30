@@ -26,6 +26,7 @@ package com.github.breninsul.futurestarter.configuration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import java.time.Duration
+
 /**
  * This class holds configuration properties related to the Future Service. These properties will be mapped from
  * the Spring application properties using a prefix of "future.service".
@@ -40,9 +41,9 @@ import java.time.Duration
  */
 @ConfigurationProperties(prefix = "future.service")
 data class FutureServiceProperties(
-    var enabled:Boolean = true,
-    var clearDelay:Duration = Duration.ofSeconds(10),
-    var defaultTimeout:Duration = Duration.ofMinutes(2),
-    var loggingLevel:String = "INFO",
-    var defaultClassTimeout:Map<String,Duration> = mapOf()
+    var enabled: Boolean = true,
+    var clearDelay: Duration = Duration.ofSeconds(10),
+    var defaultTimeout: Duration = Duration.ofMinutes(2),
+    var loggingLevel: String = "INFO",
+    var defaultClassTimeout: Map<String, Duration> = mapOf(),
 )
