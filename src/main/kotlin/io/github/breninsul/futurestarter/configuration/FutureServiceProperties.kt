@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.github.breninsul.futurestarter.configuration
+package io.github.breninsul.futurestarter.configuration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import java.time.Duration

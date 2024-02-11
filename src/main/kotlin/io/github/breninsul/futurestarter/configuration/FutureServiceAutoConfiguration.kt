@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
-package com.github.breninsul.futurestarter.configuration
+package io.github.breninsul.futurestarter.configuration
 
-import com.github.breninsul.futurestarter.service.ClearUncompletedFutureService
-import com.github.breninsul.futurestarter.service.DefaultFutureService
-import com.github.breninsul.futurestarter.service.FutureService
+import io.github.breninsul.futurestarter.service.ClearUncompletedFutureService
+import io.github.breninsul.futurestarter.service.DefaultFutureService
+import io.github.breninsul.futurestarter.service.FutureService
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty

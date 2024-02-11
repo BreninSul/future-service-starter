@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.github.breninsul.futurestarter.service
+package io.github.breninsul.futurestarter.service
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

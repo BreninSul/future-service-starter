@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("java-library")
-    id("maven-publish")
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.1.1"
     id("org.springframework.boot") version "3.2.2"
     id("io.spring.dependency-management") version "1.1.4"
     id("org.jetbrains.kotlin.jvm") version "1.9.22"
@@ -34,11 +34,14 @@ plugins {
     id("org.jetbrains.kotlin.kapt") version "1.9.22" apply (true)
 }
 
-group = "com.github.breninsul"
+group = "io.github.breninsul"
 version = "1.0.1"
+val springBootVersion = "3.2.2"
+val kotlinVersion = "1.9.22"
+val javaVersion = JavaVersion.VERSION_17
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = javaVersion
 }
 java {
     withJavadocJar()
@@ -65,7 +68,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "17"
+        jvmTarget = javaVersion.majorVersion
     }
 }
 
@@ -73,24 +76,37 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-publishing {
-    publications {
-        register<MavenPublication>("release") {
-            groupId = project.group.toString()
-            artifactId = rootProject.name
-            version = project.version.toString()
-            val softwareComponent = components.first()
-            from(softwareComponent)
+signing {
+    useGpgCmd()
+}
+
+
+
+centralPortal {
+    pom {
+        packaging = "jar"
+        name.set("BreninSul Spring Boot FutureService Starter")
+        url.set("https://github.com/BreninSul/synchronization-starter")
+        description.set("Starter for FutureService ")
+        licenses {
+            license {
+                name.set("MIT License")
+                url.set("http://opensource.org/licenses/MIT")
+            }
         }
-    }
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/BreninSul/future-service-starter")
-            credentials {
-                username = "${System.getenv()["GIHUB_PACKAGE_USERNAME"]}"
-                password = "${System.getenv()["GIHUB_PACKAGE_TOKEN"]}"
+        scm {
+            connection.set("scm:https://github.com/BreninSul/future-service-starter.git")
+            developerConnection.set("scm:git@github.com:BreninSul/future-service-starter.git")
+            url.set("https://github.com/BreninSul/future-service-starter")
+        }
+        developers {
+            developer {
+                id.set("BreninSul")
+                name.set("BreninSul")
+                email.set("brenimnsul@gmail.com")
+                url.set("breninsul.github.io")
             }
         }
     }
 }
+

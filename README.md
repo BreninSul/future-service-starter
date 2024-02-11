@@ -1,26 +1,12 @@
 The service is designed to make it easier to work with Future. It helps to register and terminate tasks by id with setting a timeout for a specific task or depending on the class (otherwise a standard value will be used)
 Contains Spring Boot Autoconfiguration, but can be used out-of Spring context
 
-To use this library, add the following repository:
-
-````kotlin
-
-repositories {
-//Other repositories
-    maven {
-        name = "GitHub"
-        url = uri("https://maven.pkg.github.com/BreninSul/future-service-starter")
-    }
-//Other repositories
-}
-````
-
- Next, add the following dependency:
+To use this library, add the following dependency:
 
 ````kotlin
 dependencies {
 //Other dependencies
-    implementation("com.github.breninsul:future-starter:1.0.1")
+    implementation("io.github.breninsul:future-starter:${version}")
 //Other dependencies
 }
 

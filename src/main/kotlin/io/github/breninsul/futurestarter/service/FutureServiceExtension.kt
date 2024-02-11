@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.github.breninsul.futurestarter.service
+package io.github.breninsul.futurestarter.service
 
 import java.time.Duration
 import java.util.concurrent.CompletableFuture

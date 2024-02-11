@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-package com.github.breninsul.futurestarter.service
+package io.github.breninsul.futurestarter.service
 
-import com.github.breninsul.futurestarter.service.FutureService.Companion.logger
+import io.github.breninsul.futurestarter.service.FutureService.Companion.logger
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 import java.util.logging.Level

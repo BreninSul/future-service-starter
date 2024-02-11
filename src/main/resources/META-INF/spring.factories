@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.github.breninsul.futurestarter.configuration.FutureServiceAutoConfiguration
+io.github.breninsul.futurestarter.configuration.FutureServiceAutoConfiguration
