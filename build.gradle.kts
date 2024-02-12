@@ -35,7 +35,7 @@ plugins {
 }
 
 group = "io.github.breninsul"
-version = "1.0.1"
+version = "1.0.2"
 val springBootVersion = "3.2.2"
 val kotlinVersion = "1.9.22"
 val javaVersion = JavaVersion.VERSION_17
@@ -110,3 +110,7 @@ centralPortal {
     }
 }
 
+tasks.jar {
+    enabled = true
+    archiveClassifier.set("")
+}
